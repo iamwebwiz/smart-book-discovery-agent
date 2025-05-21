@@ -1,0 +1,29 @@
+{
+  "name": "smart-book-discovery-agent",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "lint": "eslint src --ext .ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "Smart Book Discovery Agent - A TypeScript automation tool for scraping book data from BookDP.com.au",
+  "dependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.11.24",
+    "@types/uuid": "^9.0.8",
+    "axios": "^1.6.7",
+    "dotenv": "^16.4.5",
+    "express": "^4.18.2",
+    "openai": "^4.28.0",
+    "playwright": "^1.40.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3",
+    "uuid": "^9.0.1"
+  }
+}
