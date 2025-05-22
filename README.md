@@ -129,17 +129,37 @@ Response:
 
 ## Docker Support
 
-Build the Docker image:
+### Using Docker Compose (Recommended)
 
-```bash
-docker build -t smart-book-discovery-agent .
-```
+1. Make sure you have Docker and Docker Compose installed on your system
+2. Create a `.env` file with your configurations:
+   ```
+   PORT=3000
+   OPENAI_API_KEY=your_openai_api_key
+   MAKE_WEBHOOK_URL=your_make_webhook_url
+   ```
+3. Run the application:
 
-Run the container:
+   ```bash
+   # Build and start the containers
+   docker-compose up --build
 
-```bash
-docker run -p 3000:3000 --env-file .env smart-book-discovery-agent
-```
+   # To run in detached mode
+   docker-compose up -d
+
+   # To stop the containers
+   docker-compose down
+
+   # To view logs
+   docker-compose logs -f
+   ```
+
+The setup includes:
+
+- Hot-reloading for development
+- Volume mounting for live code updates
+- Environment variable management
+- Automatic restart on failure
 
 ## Make.com Integration Setup
 
@@ -150,7 +170,6 @@ docker run -p 3000:3000 --env-file .env smart-book-discovery-agent
 5. Add modules to process the data (e.g., Google Sheets, Notion, etc.)
 
 ![image](https://github.com/user-attachments/assets/14bea641-9537-4401-bbb2-806f60225c0f)
-
 
 ### Example Make.com Scenario
 
