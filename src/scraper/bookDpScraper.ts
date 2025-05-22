@@ -148,6 +148,8 @@ export class BookDpScraper {
         }
       });
 
+      console.log("Books data:", books);
+
       return books;
     });
   }
