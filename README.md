@@ -113,14 +113,28 @@ Response:
   "status": "success",
   "data": {
     "jobId": "123e4567-e89b-12d3-a456-426614174000",
-    "theme": "climate change",
-    "books": [...],
+    "theme": "romance",
+    "books": [
+      {
+        "title": "Example Book Title",
+        "author": "Example Author",
+        "currentPrice": 24.95,
+        "originalPrice": 29.95,
+        "description": "Book description text",
+        "productUrl": "https://bookdp.com.au/book-url",
+        "summary": "AI-generated summary of the book",
+        "relevanceScore": 85,
+        "discountAmount": 5,
+        "discountPercentage": 16.67,
+        "valueScore": 90
+      }
+    ],
     "timestamp": "2023-05-01T12:05:00.000Z",
     "metadata": {
       "totalBooks": 45,
       "averagePrice": 24.95,
       "averageRelevance": 78.5,
-      "mostRelevantBook": "Climate Change: What Everyone Needs to Know",
+      "mostRelevantBook": "Romance: What Everyone Needs to Know about First Kisses",
       "bestValueBook": "This Changes Everything"
     }
   }
