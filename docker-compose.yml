@@ -12,5 +12,5 @@ services:
       - NODE_ENV=development
     env_file:
       - .env
-    command: npm run dev
+    command: npm run start
     restart: unless-stopped
