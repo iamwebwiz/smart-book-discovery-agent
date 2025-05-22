@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { Book, EnrichedBook, JobStatus, JobResult } from "../types";
+import { JobStatus, JobResult } from "../types";
 import { BookDpScraper } from "../scraper/bookDpScraper";
 import { OpenAiService } from "./openAiService";
 import { MakeWebhookService } from "./makeWebhookService";

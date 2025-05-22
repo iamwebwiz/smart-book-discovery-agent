@@ -2,7 +2,7 @@ export interface Book {
   title: string;
   author: string;
   currentPrice: number;
-  originalPrice?: number; // Optional, as some books may not be discounted
+  originalPrice?: number;
   description: string;
   productUrl: string;
 }

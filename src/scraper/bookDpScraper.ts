@@ -34,17 +34,20 @@ export class BookDpScraper {
     }
 
     const books: Book[] = [];
-    const searchUrl = `${config.bookDpUrl}/search?searchTerm=${encodeURIComponent(theme)}`;
+    const searchUrl = `${config.bookDpUrl}/?s=${encodeURIComponent(theme)}&post_type=product`;
 
     // Process multiple pages of search results
     for (let pageNum = 1; pageNum <= config.pagesToScrape; pageNum++) {
-      const pageUrl = pageNum === 1 ? searchUrl : `${searchUrl}&page=${pageNum}`;
+      const pageUrl =
+        pageNum === 1
+          ? searchUrl
+          : `${config.bookDpUrl}/page/${pageNum}/?s=${encodeURIComponent(theme)}&post_type=product`;
       console.log(`Scraping page ${pageNum}: ${pageUrl}`);
 
       await this.page.goto(pageUrl, { waitUntil: "domcontentloaded" });
 
       // Wait for search results to load
-      await this.page.waitForSelector(".book-item", { timeout: 10000 }).catch(() => {
+      await this.page.waitForSelector(".products", { timeout: 10000 }).catch(() => {
         console.log("No book items found on page");
       });
 
@@ -71,44 +74,63 @@ export class BookDpScraper {
 
     return this.page.evaluate(() => {
       const books: Book[] = [];
-      const bookElements = document.querySelectorAll(".book-item");
+      const bookElements = document.querySelectorAll(".product-inner");
 
       bookElements.forEach((element) => {
         try {
-          // Extract title
-          const titleElement = element.querySelector(".title a");
+          // Extract title and URL
+          const titleElement = element.querySelector(".product-summary .woocommerce-loop-product__title a");
           const title = titleElement?.textContent?.trim() || "";
-
-          // Extract author
-          const authorElement = element.querySelector(".author");
-          const author = authorElement?.textContent?.trim() || "";
-
-          // Extract product URL
           const productUrl = (titleElement as HTMLAnchorElement)?.href || "";
 
-          // Extract price information
-          const priceElement = element.querySelector(".price");
-          let currentPrice = 0;
-          let originalPrice: number | undefined = undefined;
-
-          if (priceElement) {
-            const priceText = priceElement.textContent?.trim() || "";
-            const priceMatch = priceText.match(/\$(\d+\.\d+)/g);
-
-            if (priceMatch && priceMatch.length >= 1) {
-              // Current price is always present
-              currentPrice = parseFloat(priceMatch[0].replace("$", ""));
-
-              // Original price is present only if there's a discount
-              if (priceMatch.length > 1) {
-                originalPrice = parseFloat(priceMatch[1].replace("$", ""));
+          // Extract author from URL
+          let author = "";
+          if (productUrl) {
+            const urlParts = productUrl.split("/");
+            const lastPart = urlParts[urlParts.length - 2]; // Get the second last part of the URL
+            if (lastPart) {
+              // Split by hyphen and remove the last part (ISBN)
+              const parts = lastPart.split("-");
+              if (parts.length > 1) {
+                // Remove the last part (ISBN) and join the rest to get the author name
+                parts.pop();
+                author = parts.join(" ").replace(/-/g, " ");
               }
             }
           }
 
-          // Extract description (basic info)
-          const formatElement = element.querySelector(".format");
-          const description = formatElement?.textContent?.trim() || "";
+          // Extract price information
+          const priceElement = element.querySelector(".product-summary .price");
+          let currentPrice = 0;
+          let originalPrice: number | undefined = undefined;
+
+          if (priceElement) {
+            // Extract current price (from ins element)
+            const currentPriceElement = priceElement.querySelector("ins .woocommerce-Price-amount");
+            if (currentPriceElement) {
+              const currentPriceText = currentPriceElement.textContent?.trim() || "";
+              currentPrice = parseFloat(currentPriceText.replace("$", ""));
+            }
+
+            // Extract original price (from del element)
+            const originalPriceElement = priceElement.querySelector("del .woocommerce-Price-amount");
+            if (originalPriceElement) {
+              const originalPriceText = originalPriceElement.textContent?.trim() || "";
+              originalPrice = parseFloat(originalPriceText.replace("$", ""));
+            }
+          }
+
+          // Extract basic description from product summary
+          const descriptionElement = element.querySelector(
+            ".product-summary .woocommerce-product-details__short-description"
+          );
+          let description = "";
+          if (descriptionElement) {
+            description = descriptionElement.textContent?.trim() || "";
+          } else {
+            // Fallback to using the title as a basic description
+            description = `Book: ${title}`;
+          }
 
           // Create book object
           if (title && author) {
@@ -149,20 +171,25 @@ export class BookDpScraper {
         await detailPage.goto(book.productUrl, { waitUntil: "domcontentloaded" });
 
         // Wait for description element
-        await detailPage.waitForSelector(".item-description", { timeout: 5000 }).catch(() => {
+        await detailPage.waitForSelector(".woocommerce-tabs--description-content p", { timeout: 5000 }).catch(() => {
           console.log(`No description found for book: ${book.title}`);
         });
 
-        // Extract full description
+        // Extract first sentence from description
         const fullDescription = await detailPage.evaluate(() => {
-          const descElement = document.querySelector(".item-description");
-          return descElement?.textContent?.trim() || "";
+          const descElement = document.querySelector(".woocommerce-tabs--description-content p");
+          if (!descElement) return "";
+
+          const text = descElement.textContent?.trim() || "";
+          // Split by period and get the first sentence, ensuring it ends with a period
+          const firstSentence = text.split(".")[0].trim() + ".";
+          return firstSentence;
         });
 
         // Close the page
         await detailPage.close();
 
-        // Update book with full description
+        // Update book with first sentence of description
         enrichedBooks.push({
           ...book,
           description: fullDescription || book.description,

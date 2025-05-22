@@ -12,7 +12,7 @@ A TypeScript automation tool for scraping book data from BookDP.com.au based on 
 
 ## Prerequisites
 
-- Node.js (v16+)
+- Node.js (v20+)
 - npm or yarn
 - OpenAI API Key
 - Make.com account with a webhook
@@ -131,13 +131,13 @@ Response:
 
 Build the Docker image:
 
-```
+```bash
 docker build -t smart-book-discovery-agent .
 ```
 
 Run the container:
 
-```
+```bash
 docker run -p 3000:3000 --env-file .env smart-book-discovery-agent
 ```
 

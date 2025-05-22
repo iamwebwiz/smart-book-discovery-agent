@@ -1,4 +1,4 @@
-FROM node:22-slim
+FROM node:20-slim
 
 # Install Playwright dependencies
 RUN apt-get update && apt-get install -y \
@@ -32,7 +32,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci
+RUN npm install
 
 # Install Playwright browsers
 RUN npx playwright install chromium
@@ -43,15 +43,5 @@ COPY . .
 # Build TypeScript code
 RUN npm run build
 
-# Create a non-root user
-RUN groupadd -r appuser && useradd -r -g appuser appuser
-RUN chown -R appuser:appuser /app
-
-# Switch to non-root user
-USER appuser
-
 # Expose port
 EXPOSE 3000
-
-# Start the service
-CMD ["npm", "start"]
