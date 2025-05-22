@@ -149,7 +149,8 @@ docker run -p 3000:3000 --env-file .env smart-book-discovery-agent
 4. Copy the webhook URL and set it as `MAKE_WEBHOOK_URL` in your `.env` file
 5. Add modules to process the data (e.g., Google Sheets, Notion, etc.)
 
-![Make.com Scenario Example](make_scenario_screenshot.png)
+![image](https://github.com/user-attachments/assets/14bea641-9537-4401-bbb2-806f60225c0f)
+
 
 ### Example Make.com Scenario
 
@@ -165,6 +166,16 @@ Here's an example scenario you can implement:
 - The scraper is designed for BookDP.com.au's current website structure and may break if the site is updated.
 - Rate limiting may affect the number of books that can be processed in a single job.
 - The OpenAI API has usage costs associated with it.
+
+## Screenshots
+
+<img width="1510" alt="image" src="https://github.com/user-attachments/assets/0877b184-f134-4c2f-a339-9ef45e3f1fb3" />
+Scraped output sample
+
+---
+
+![image](https://github.com/user-attachments/assets/8fe99294-7272-4bf3-850b-292baeea81ae)
+Make.com Scenario Configuration
 
 ## License
 
